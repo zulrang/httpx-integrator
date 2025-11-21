@@ -1,0 +1,16 @@
+.*
+!.coveragerc
+!.env
+!.pylintrc
+www
+k8s
+.github
+.git
+.circleci
+.vscode
+.pytest_cache
+k8s
+.venv
+api/.venv
+.worktrees/
+.coverage
