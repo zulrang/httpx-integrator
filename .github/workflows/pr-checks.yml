@@ -1,0 +1,42 @@
+name: PR Checks
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+jobs:
+  pr-checks:
+    name: PR Quality Checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "latest"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: uv sync --all-groups
+
+      - name: Run all checks
+        run: |
+          echo "Running linting..."
+          uv run ruff format --check src tests
+          uv run ruff check src tests
+
+          echo "Running type checking..."
+          uv run mypy src
+
+          echo "Running tests..."
+          uv run pytest -n auto tests --cov=src/httpx_integrator --cov-report=term-missing
+
+          echo "All checks passed!"
